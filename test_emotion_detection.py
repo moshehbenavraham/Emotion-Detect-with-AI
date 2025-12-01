@@ -1,49 +1,64 @@
-import unittest # Import the unittest framework
-from EmotionDetection.emotion_detection import emotion_detector # Import the emotion_detector function from the EmotionDetection package
+"""
+Unit tests for the EmotionDetection package.
+"""
 
-class TestEmotionDetection(unittest.TestCase): # Define a class for the unit tests
-    
-    def test_joy_dominant(self): # Define a test method for the joy dominant emotion
-        statement = "I am glad this happened" # Define the statement to test
-        result = emotion_detector(statement) # Call the emotion_detector function with the statement
-        expected = 'joy' # Define the expected result
-        self.assertEqual(result['dominant_emotion'], expected, 
-                        msg=f"Expected dominant emotion '{expected}' for '{statement}', got {result}") # Assert that the result is equal to the expected result
-        print(f"Test Joy: '{statement}' -> {result}") # Print the result
-    
+import unittest
+from EmotionDetection.emotion_detection import emotion_detector
+
+
+class TestEmotionDetection(unittest.TestCase):
+    """Test cases for the emotion_detector function."""
+
+    def test_joy_dominant(self):
+        """Test that joy is detected as dominant emotion for joyful text."""
+        statement = "I am glad this happened"
+        result = emotion_detector(statement)
+        self.assertEqual(result['dominant_emotion'], 'joy')
+
     def test_anger_dominant(self):
+        """Test that anger is detected as dominant emotion for angry text."""
         statement = "I am really mad about this"
         result = emotion_detector(statement)
-        expected = 'anger'
-        self.assertEqual(result['dominant_emotion'], expected,
-                        msg=f"Expected dominant emotion '{expected}' for '{statement}', got {result}")
-        print(f"Test Anger: '{statement}' -> {result}")
-    
+        self.assertEqual(result['dominant_emotion'], 'anger')
+
     def test_disgust_dominant(self):
+        """Test that disgust is detected as dominant emotion for disgusted text."""
         statement = "I feel disgusted just hearing about this"
         result = emotion_detector(statement)
-        expected = 'disgust'
-        self.assertEqual(result['dominant_emotion'], expected,
-                        msg=f"Expected dominant emotion '{expected}' for '{statement}', got {result}")
-        print(f"Test Disgust: '{statement}' -> {result}")
-    
+        self.assertEqual(result['dominant_emotion'], 'disgust')
+
     def test_sadness_dominant(self):
+        """Test that sadness is detected as dominant emotion for sad text."""
         statement = "I am so sad about this"
         result = emotion_detector(statement)
-        expected = 'sadness'
-        self.assertEqual(result['dominant_emotion'], expected,
-                        msg=f"Expected dominant emotion '{expected}' for '{statement}', got {result}")
-        print(f"Test Sadness: '{statement}' -> {result}")
-    
+        self.assertEqual(result['dominant_emotion'], 'sadness')
+
     def test_fear_dominant(self):
+        """Test that fear is detected as dominant emotion for fearful text."""
         statement = "I am really afraid that this will happen"
         result = emotion_detector(statement)
-        expected = 'fear'
-        self.assertEqual(result['dominant_emotion'], expected,
-                        msg=f"Expected dominant emotion '{expected}' for '{statement}', got {result}")
-        print(f"Test Fear: '{statement}' -> {result}")
+        self.assertEqual(result['dominant_emotion'], 'fear')
 
-# If the script is run directly, execute the unit tests
+    def test_blank_input(self):
+        """Test that blank input returns None for dominant emotion."""
+        result = emotion_detector("")
+        self.assertIsNone(result['dominant_emotion'])
+        self.assertIsNone(result['anger'])
+        self.assertIsNone(result['disgust'])
+        self.assertIsNone(result['fear'])
+        self.assertIsNone(result['joy'])
+        self.assertIsNone(result['sadness'])
+
+    def test_whitespace_only_input(self):
+        """Test that whitespace-only input returns None for dominant emotion."""
+        result = emotion_detector("   ")
+        self.assertIsNone(result['dominant_emotion'])
+
+    def test_none_input(self):
+        """Test that None input returns None for dominant emotion."""
+        result = emotion_detector(None)
+        self.assertIsNone(result['dominant_emotion'])
+
+
 if __name__ == '__main__':
-    unittest.main(verbosity=2) # Execute the unit tests
-
+    unittest.main(verbosity=2)

@@ -1,28 +1,46 @@
-# This file is the server for the emotion detection application
-from flask import Flask, render_template, request # Import the Flask framework and the request module
-from EmotionDetection.emotion_detection import emotion_detector # Import the emotion_detector function from the EmotionDetection package
+"""
+Flask Server for Emotion Detection Application
 
-app = Flask(__name__) # Create a Flask application
+This module provides a web server that exposes an emotion detection API
+using the EmotionDetection package.
+"""
 
-@app.route('/') # Define the route for the home page
-def index(): # Define the function for the home page
-    return render_template('index.html') # Return the home page
+from flask import Flask, render_template, request
+from EmotionDetection.emotion_detection import emotion_detector
 
-@app.route('/emotionDetector', methods=['GET', 'POST']) # Define the route for the emotion detection page
-def emotion_detector_route(): # Define the function for the emotion detection page
-    if request.method == 'POST': # If the request method is POST
-        text_to_analyze = request.form['text'] # Get the text input from the POST request
-    else: # If the request method is GET
-        text_to_analyze = request.args.get('textToAnalyze', '') # Get the text input from the GET request
-    
-    # Call the emotion_detector function
+app = Flask(__name__)
+
+
+@app.route('/')
+def index():
+    """Render the home page."""
+    return render_template('index.html')
+
+
+@app.route('/emotionDetector', methods=['GET', 'POST'])
+def emotion_detector_route():
+    """
+    Handle emotion detection requests.
+
+    Accepts both GET and POST requests with text to analyze.
+    GET: Uses 'textToAnalyze' query parameter.
+    POST: Uses 'text' form field.
+
+    Returns:
+        str: Formatted response with emotion scores and dominant emotion,
+             or an error message for invalid input.
+    """
+    if request.method == 'POST':
+        text_to_analyze = request.form.get('text', '')
+    else:
+        text_to_analyze = request.args.get('textToAnalyze', '')
+
     result = emotion_detector(text_to_analyze)
-    
-    # Check if the result is valid (e.g., dominant_emotion is None or text is empty)
-    if 'dominant_emotion' not in result or result['dominant_emotion'] is None or not text_to_analyze:
-        return "Invalid text! Please try again!" # Return an error message
-    
-    # Format the response as per the customer's request
+
+    # Check if the result is valid
+    if result['dominant_emotion'] is None:
+        return "Invalid text! Please try again!"
+
     response = (
         f"For the given statement, the system response is "
         f"'anger': {result['anger']}, "
@@ -32,9 +50,9 @@ def emotion_detector_route(): # Define the function for the emotion detection pa
         f"'sadness': {result['sadness']}. "
         f"The dominant emotion is {result['dominant_emotion']}."
     )
-    
+
     return response
 
-# If the script is run directly, run the Flask application
+
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000, debug=True) # Run the Flask application on localhost at port 5000 with debugging enabled
+    app.run(host='localhost', port=5000, debug=True)
